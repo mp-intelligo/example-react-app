@@ -1,6 +1,6 @@
 import { Avatar, Button, makeStyles, Paper, Typography, CircularProgress } from '@material-ui/core';
 import MaterialTable from 'material-table-clone';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { CandidateListProps } from './candidate.types';
 
@@ -16,11 +16,15 @@ const useStyles = makeStyles({
 });
 
 export default function CandidateList(
-    { candidates }: CandidateListProps
+    { candidates, setIsRootPage }: CandidateListProps
 ) {
     const { path } = useRouteMatch();
     const classes = useStyles();
     
+    useEffect(() => {
+        setIsRootPage(true);
+    }, []);
+
     return (
         candidates.length ?
         <>

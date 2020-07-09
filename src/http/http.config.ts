@@ -1,6 +1,6 @@
 declare const location: Location;
 
-export const apiBaseUrl = `${location.origin}/api`;
+export const apiBaseUrl = `http://localhost:8080/api`;
 
 export enum HttpEndPoint {
     signin = '/auth/signin',

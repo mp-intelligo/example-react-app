@@ -14,9 +14,11 @@ export interface CandidateView extends Candidate {
 };
 
 export type CandidateListProps = {
-    candidates: CandidateView[]
+    candidates: CandidateView[],
+    setIsRootPage: (isRootPage: boolean) => void
 };
 
 export type CandidateDetailsProps = {
-    fetchById: (id: string) => CandidateView | undefined
+    fetchById: (id: string) => CandidateView | undefined,
+    setIsRootPage: (isRootPage: boolean) => void
 };

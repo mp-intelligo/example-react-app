@@ -6,7 +6,7 @@ import CandidateList from './candidate-list';
 import { CandidateView } from './candidate.types';
 import { CircularProgress } from '@material-ui/core';
 
-const Candidates = () => {
+const Candidates = ({ setIsRootPage }: any) => {
 
     let { path } = useRouteMatch();
 
@@ -32,10 +32,14 @@ const Candidates = () => {
             <Route exact path={path}>
                 <CandidateList
                     candidates={candidates}
+                    setIsRootPage={setIsRootPage}
                 />
             </Route>
             <Route path={`${path}/:id`}>
-                <CandidateDetails fetchById={fetchCandidateById}/>
+                <CandidateDetails
+                    setIsRootPage={setIsRootPage}
+                    fetchById={fetchCandidateById}
+                />
             </Route>
         </Switch>
     );

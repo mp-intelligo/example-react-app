@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AppBar, Toolbar, Button, makeStyles, IconButton } from '@material-ui/core';
-import { Switch, Route, Redirect, Link } from 'react-router-dom';
+import { Switch, Route, Redirect, Link, useRouteMatch } from 'react-router-dom';
 import Candidates from '../candidates/candidates';
 import ArrowBackTwoToneIcon from '@material-ui/icons/ArrowBackTwoTone';
 
@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
     },
     toolbar: {
+        flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
@@ -18,9 +19,11 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const Main = ({ setIsLoggedIn }: any) => {
 
+const Main = ({ setIsLoggedIn }: any) => {
     const classes = useStyles();
+
+    const [isRootPage, setIsRootPage] = useState(true);
 
     const signOut = () => {
         AuthenticationService.signOut()
@@ -33,10 +36,14 @@ const Main = ({ setIsLoggedIn }: any) => {
         <>
         <AppBar position="static">
             <Toolbar className={classes.toolbar}>
-                <IconButton aria-label="Back" color="inherit" component={Link} to="../">
-                    <ArrowBackTwoToneIcon />
-                </IconButton>                    
                 <Button color="inherit" onClick={signOut}>Sign Out</Button>
+                {   
+                    (!isRootPage)
+                    &&
+                    (<IconButton aria-label="Back" color="inherit" component={Link} to="../">
+                        <ArrowBackTwoToneIcon />
+                    </IconButton>)
+                }              
             </Toolbar>
         </AppBar>
         <div className={classes.main}>
@@ -46,7 +53,7 @@ const Main = ({ setIsLoggedIn }: any) => {
                 </Route>
 
                 <Route path="/candidates">
-                    <Candidates />
+                    <Candidates setIsRootPage={setIsRootPage}/>
                 </Route>
             </Switch>
         </div>

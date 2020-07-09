@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { CandidateDetailsProps, CandidateView } from './candidate.types';
 import { makeStyles, Card, CardHeader, Avatar, CardContent, Typography } from '@material-ui/core';
@@ -23,10 +23,16 @@ const useStiles = makeStyles(theme => ({
     }
 }));
 
-export default function CandidateDetails({ fetchById }: CandidateDetailsProps) {
+export default function CandidateDetails({ setIsRootPage, fetchById }: CandidateDetailsProps) {
+    
     const classes = useStiles();
+
     const { id } = useParams();
     
+    useEffect(() => {
+        setIsRootPage(false);
+    }, []);
+
     const [candidate] = useState(fetchById(id));
 
     const { avatar, fullName, job_title, job_description, gender }: CandidateView = (candidate || {}) as CandidateView;
