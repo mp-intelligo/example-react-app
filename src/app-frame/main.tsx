@@ -1,15 +1,16 @@
 import React from 'react';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { AppBar, Toolbar, Button, makeStyles } from '@material-ui/core';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { AppBar, Toolbar, Button, makeStyles, IconButton } from '@material-ui/core';
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import Candidates from '../candidates/candidates';
+import ArrowBackTwoToneIcon from '@material-ui/icons/ArrowBackTwoTone';
 
 const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
     },
     toolbar: {
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         alignItems: 'center'
     },
     main: {
@@ -32,6 +33,9 @@ const Main = ({ setIsLoggedIn }: any) => {
         <>
         <AppBar position="static">
             <Toolbar className={classes.toolbar}>
+                <IconButton aria-label="Back" color="inherit" component={Link} to="../">
+                    <ArrowBackTwoToneIcon />
+                </IconButton>                    
                 <Button color="inherit" onClick={signOut}>Sign Out</Button>
             </Toolbar>
         </AppBar>

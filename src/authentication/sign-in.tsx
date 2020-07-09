@@ -1,20 +1,19 @@
-import React, { FormEvent, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { Formik } from 'formik';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { AuthenticationProps } from './authentication.types';
+import * as Yup from 'yup';
 import { AuthenticationService } from './authentication.service';
-import { Formik, Form, Field } from 'formik';
-
+import { AuthenticationProps, SignInRequestData } from './authentication.types';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,18 +36,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProps) {
+const validationSchema = Yup.object().shape({
+  username: Yup.string()
+    .required('Username is required'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(6, 'Password should be at least 6 characters')
+    .matches(/[A-z]/, 'Password should contain at least one letter')
+    .matches(/\d/, 'Password should contain at least one digit')
+});
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+
+export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProps) {
+  
   const [error, setError] = useState('');
 
   const classes = useStyles();
 
-  const onSubmit = (e: FormEvent<HTMLElement>) => {
-
-    e.preventDefault();
-    
+  const onSubmit = async ({username, password}: SignInRequestData) => {
     AuthenticationService.signIn({
       username,
       password
@@ -60,13 +65,15 @@ export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
     .catch(error => {
       setError(error.message);
     })
-  }
+};
 
   return (
     isLoggedIn ?
       <Redirect to="/" />
       :
+      
     <Container component="main" maxWidth="xs">
+
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -75,68 +82,89 @@ export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
           Sign in
         </Typography>
 
+        <Formik
+          initialValues={{ username: '', password: '' }}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
 
+          {props => {
 
+            const {
+              values,
+              touched,
+              errors,
+              isSubmitting,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+            } = props;
 
+            return (
+              <form className={classes.form} onSubmit={handleSubmit}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
+                  autoFocus
+                  value={values.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.username && !!touched.username}
+                  helperText={errors.username}
+                  />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.password && !!touched.password}
+                  helperText={errors.password}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={isSubmitting}
+                >
+                  Sign In
+                </Button>
+                <Grid container>
+                  <Grid item>
+                    <Link href="/sign-up" variant="body2">
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                  </Grid>            
+                </Grid>
+              </form>
+            );
+          }}
+      </Formik>
+    </div>
 
+    <Box mt={8}>
+      <Typography variant="body2" color="error" align="center">
+        {error}
+      </Typography>
+    </Box>
 
-
-
-
-
-
-
-
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            onChange={({ target: { value }}) => setUsername(value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={({ target: { value }}) => setPassword(value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item>
-              <Link href="/sign-up" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-            <Grid item>
-            </Grid>            
-          </Grid>
-        </form>
-      </div>
-      <Box mt={8}>
-        <Typography variant="body2" color="error" align="center">
-          {error}
-        </Typography>
-      </Box>
-    </Container>
+  </Container>
   );
 }

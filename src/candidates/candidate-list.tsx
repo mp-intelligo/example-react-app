@@ -1,5 +1,5 @@
 import { Avatar, Button, makeStyles, Paper, Typography, CircularProgress } from '@material-ui/core';
-import MaterialTable from 'material-table';
+import MaterialTable from 'material-table-clone';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { CandidateListProps } from './candidate.types';
@@ -52,11 +52,9 @@ export default function CandidateList(
                     {
                         title: 'Show more',
                         render: rowData => (
-                            <Link style={{ textDecoration: 'none' }} to={`${path}/${rowData.id}`}>
-                                <Button variant="outlined" color="primary">
-                                    Show
-                                </Button>
-                            </Link>
+                            <Button variant="outlined" color="primary" component={Link} to={`${path}/${rowData.id}`}>
+                                Show
+                            </Button>
                         )
                     }
                 ]}

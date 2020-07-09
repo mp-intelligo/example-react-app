@@ -1,18 +1,19 @@
-import React, { useState, FormEvent } from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { Formik } from 'formik';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { AuthenticationProps } from './authentication.types';
+import * as Yup from 'yup';
 import { AuthenticationService } from './authentication.service';
+import { AuthenticationProps, SignUpRequestData } from './authentication.types';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,17 +35,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+const validationSchema = Yup.object().shape({
+  username: Yup.string()
+    .required('Username is required'),
+
+  email: Yup.string()
+    .required('Email is required')
+    .email('Email is not valid'),
+    
+  password: Yup.string()
+    .required('Password is required')
+    .min(6, 'Password should be at least 6 characters')
+    .matches(/[A-z]/, 'Password should contain at least one letter')
+    .matches(/\d/, 'Password should contain at least one digit')
+});
+
 export default function SignUp({ isLoggedIn, setIsLoggedIn }: AuthenticationProps) {
+
   const classes = useStyles();
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  function onSubmit(e: FormEvent<HTMLElement>) {
-    e.preventDefault();
-
+  const onSubmit = ({ username, email, password}: SignUpRequestData) => {
     AuthenticationService.signUp({
       username,
       email,
@@ -57,14 +70,15 @@ export default function SignUp({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
     .catch(error => {
       setError(error.message);
     });
-  }
+  };
 
   return (
     isLoggedIn ?
     <Redirect to="/" />
     :
+
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
+
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -72,70 +86,107 @@ export default function SignUp({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="username"
-                name="username"
-                variant="outlined"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                autoFocus
-                onChange={({ target: { value }}) => setUsername(value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                onChange={({ target: { value }}) => setEmail(value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={({ target: { value }}) => setPassword(value)}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container>
-            <Grid item>
-              <Link href="/sign-in" variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
+
+        <Formik
+          initialValues={{ username: '', email: '', password: '' }}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
+
+          {props => {
+
+            const {
+              values,
+              touched,
+              errors,
+              isSubmitting,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+            } = props;
+
+            return (        
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      autoComplete="username"
+                      name="username"
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="username"
+                      label="Username"
+                      autoFocus
+                      value={values.username}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={!!errors.username && !!touched.username}
+                      helperText={errors.username}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      value={values.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={!!errors.email && !!touched.email}
+                      helperText={errors.email}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="current-password"
+                      value={values.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={!!errors.password && !!touched.password}
+                      helperText={errors.password}
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={isSubmitting}            
+                >
+                  Sign Up
+                </Button>
+                <Grid container>
+                  <Grid item>
+                    <Link href="/sign-in" variant="body2">
+                      Already have an account? Sign in
+                    </Link>
+                  </Grid>
+                </Grid>
+              </form>
+            );
+          }}
+        </Formik>        
       </div>
+
       <Box mt={8}>
-      <Typography variant="body2" color="error" align="center">
-        {error}
-      </Typography>
-    </Box>      
+        <Typography variant="body2" color="error" align="center">
+          {error}
+        </Typography>
+      </Box>      
     </Container>
   );
 }

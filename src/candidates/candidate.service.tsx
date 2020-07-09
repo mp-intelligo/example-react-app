@@ -10,11 +10,11 @@ export class CandidateService {
     static candidates: CandidateView[];
 
     static populateCandidates(candidates: Candidate[]) {
-
-        this.candidates = candidates.map(({first_name, last_name, ...rest}) => ({
+        this.candidates = candidates.map(({first_name, last_name, job_description, ...rest}) => ({
             first_name,
             last_name,
             fullName: `${first_name} ${last_name}`,
+            job_description: job_description.replace(/\\/g, ''),
             ...rest
         }));
     }

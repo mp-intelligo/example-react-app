@@ -9,6 +9,10 @@ const useStiles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    card: {
+        width: '100vw',
+        maxWidth: '800px'
+    },
     content: {
         paddingLeft: theme.spacing(3),
     },
@@ -31,7 +35,7 @@ export default function CandidateDetails({ fetchById }: CandidateDetailsProps) {
         candidate ?
 
         <div className={classes.main}>
-            <Card>
+            <Card className={classes.card}>
                 <CardHeader
                     avatar={
                         <Avatar aria-label="Avatar" src={avatar}/>
