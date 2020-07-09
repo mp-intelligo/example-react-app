@@ -53,7 +53,7 @@ export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
 
   const classes = useStyles();
 
-  const onSubmit = async ({username, password}: SignInRequestData) => {
+  const onSubmit = async ({username, password}: SignInRequestData, { setSubmitting }: any) => {
     AuthenticationService.signIn({
       username,
       password
@@ -65,6 +65,9 @@ export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
     .catch(error => {
       setError(error.message);
     })
+    .finally(() => {
+      setSubmitting(false);
+    });
 };
 
   return (

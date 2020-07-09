@@ -57,7 +57,7 @@ export default function SignUp({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
 
   const [error, setError] = useState('');
 
-  const onSubmit = ({ username, email, password}: SignUpRequestData) => {
+  const onSubmit = ({ username, email, password}: SignUpRequestData, { setSubmitting }: any) => {
     AuthenticationService.signUp({
       username,
       email,
@@ -69,6 +69,9 @@ export default function SignUp({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
     })
     .catch(error => {
       setError(error.message);
+    })
+    .finally(() => {
+      setSubmitting(false);
     });
   };
 
