@@ -2,8 +2,6 @@ import { Candidate, CandidateView } from './candidate.types';
 import { HttpApiService } from '../http/http.service';
 import { HttpEndPoint } from '../http/http.config';
 
-export const fetchCandidates = async () => {
-}
 
 export class CandidateService {
 
