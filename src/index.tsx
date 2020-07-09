@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 ReactDOM.render(
   <>
     <CssBaseline />
-    <BrowserRouter>
+    <BrowserRouter basename="/#/app/">
       <App />
     </BrowserRouter>
   </>,

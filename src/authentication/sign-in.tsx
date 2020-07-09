@@ -3,14 +3,14 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
+import MaterialLink from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationProps, SignInRequestData } from './authentication.types';
@@ -146,9 +146,9 @@ export default function SignIn({ isLoggedIn, setIsLoggedIn }: AuthenticationProp
                 </Button>
                 <Grid container>
                   <Grid item>
-                    <Link href="/sign-up" variant="body2">
+                    <MaterialLink variant="body2" component={Link} to="/sign-up">
                       {"Don't have an account? Sign Up"}
-                    </Link>
+                    </MaterialLink>
                   </Grid>
                   <Grid item>
                   </Grid>            
