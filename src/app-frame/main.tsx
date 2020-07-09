@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { AppBar, Toolbar, Button, makeStyles, IconButton } from '@material-ui/core';
-import { Switch, Route, Redirect, Link, useRouteMatch } from 'react-router-dom';
-import Candidates from '../candidates/candidates';
+import { AppBar, Button, IconButton, makeStyles, Toolbar } from '@material-ui/core';
 import ArrowBackTwoToneIcon from '@material-ui/icons/ArrowBackTwoTone';
+import React, { useState } from 'react';
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { AuthenticationService } from '../authentication/authentication.service';
+import Candidates from '../candidates/candidates';
 
 const useStyles = makeStyles((theme) => ({
     root: {
